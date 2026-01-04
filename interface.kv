@@ -1,0 +1,2521 @@
+ScreenManager:
+    MenuScreen:
+    MyProjectsScreen:
+    NewProjectScreen:
+    DeleteProjectScreen:
+    ViewProjectScreen:  # Tela de visualização do projeto, listando suas parcelas e permitindo adicionar e apagar parcelas
+    DeletePlotScreen:
+    NewPlotScreen1:     # Essa tela coleta coordenadas e altitude
+    NewPlotScreen2:     # Essa tela contém a matriz fisionômica
+    SettingsScreen:     # Tela de configurações
+    AboutAppScreen:     # Tela sobre o aplicativo
+
+<MenuScreen>:
+    name: 'menu_screen'
+    MDBoxLayout:
+        orientation: 'vertical'
+        
+        MDTopAppBar:
+            title: 'KuchlerApp'
+            elevation: 0
+            pos_hint: {'top': 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [['arrow-left', lambda x: app.confirm_exit_app()]]
+            right_action_items: [['cog', lambda x: app.go_to_screen('settings_screen')]]
+        
+        MDScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(20)
+                adaptive_height: True
+
+                Widget:
+                    size_hint_y: None
+                    height: dp(40)
+                
+                MDCard:
+                    size_hint_y: None
+                    height: dp(120)
+                    elevation: 0
+                    ripple_behavior: True
+                    md_bg_color: app.theme_cls.primary_color
+                    radius: [15, 15, 15, 15]
+                    on_release: app.go_to_screen('my_projects_screen')
+                
+                    MDLabel:
+                        text: 'Meus Projetos'
+                        halign: 'center'
+                        valign: 'center'
+                        font_style: 'H5'
+                        bold: True
+                        theme_text_color: 'Custom'
+                        text_color: 1, 1, 1, 1
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(16)
+
+                MDCard:
+                    size_hint_y: None
+                    height: dp(120)
+                    elevation: 0
+                    ripple_behavior: True
+                    md_bg_color: app.theme_cls.primary_color
+                    radius: [15, 15, 15, 15]
+                    on_release: app.go_to_screen('about_app_screen')
+
+                    MDLabel:
+                        text: 'Sobre o KuchlerApp'
+                        halign: 'center'
+                        valign: 'middle'
+                        font_style: 'H5'
+                        bold: True
+                        theme_text_color: 'Custom'
+                        text_color: 1, 1, 1, 1
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(40)
+
+<MyProjectsScreen>:
+    name: 'my_projects_screen'
+    on_pre_enter: app.load_projects_list()
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Meus Projetos' 
+            elevation: 0
+            pos_hint: {'top': 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [['arrow-left', lambda x: app.go_back()]]
+            right_action_items: [["delete", lambda x: app.go_to_delete_projects()]]
+        
+        MDScrollView:
+            MDList:
+                id: projects_list_container
+                padding: dp(10)
+                spacing: dp(10)
+        
+        FloatLayout:
+            size_hint_y: None
+            height: dp(80)
+            padding: [dp(16), dp(16), dp(16), dp(16)]
+
+            MDFloatingActionButton:
+                icon: 'plus'
+                md_bg_color: app.theme_cls.primary_color
+                size_hint: None, None
+                size: dp(64), dp(64)
+                pos_hint: {'right': 0.95, 'center_y': 0.5}
+                on_release: app.go_to_screen('new_project_screen')
+
+<NewProjectScreen>:
+    name: 'new_project_screen'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Novo Projeto'
+            elevation: 0
+            pos_hint: {'top': 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [['arrow-left', lambda x: app.go_back()]]
+
+        MDScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(20)
+                adaptive_height: True
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(20)
+
+                MDTextField:
+                    id: project_name_input
+                    hint_text: 'Nome do Projeto'
+                    helper_text: 'Insira o nome do projeto'
+                    helper_text_mode: 'on_focus'
+
+                Widget:
+                    size_hint_y: None
+                    height: dp(20)
+
+                MDRaisedButton:
+                    text: 'Salvar Projeto'
+                    size_hint: (1, None)
+                    height: dp(50)
+                    md_bg_color: app.theme_cls.primary_color
+                    on_release: app.save_new_project()
+<DeleteProjectScreen>:
+    name: 'delete_project_screen'
+    on_pre_enter: app.load_delete_projects_list()
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Excluir Projeto'
+            elevation: 0
+            pos_hint: {'top': 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [['arrow-left', lambda x: app.go_back()]]
+        
+        MDScrollView:
+            MDList:
+                id: delete_projects_list_container
+                padding: dp(10)
+                spacing: dp(10)
+        
+        MDLabel:
+            text: 'Toque em um projeto para excluí-lo'
+            halign: 'center'
+            font_style: 'Caption'
+            size_hint_y: None
+            height: dp(40)
+            padding: [dp(10), dp(10)]
+<ViewProjectScreen>:
+    name: 'view_project_screen'
+    on_pre_enter: app.load_project_details()
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            id: project_title_bar
+            title: 'Detalhes do Projeto'
+            elevation: 0
+            pos_hint: {'top': 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [['arrow-left', lambda x: app.go_back()]]
+            right_action_items: [['export', lambda x: app.export_project_to_csv()], ['delete', lambda x: app.go_to_delete_plots()]]
+        
+        MDScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(16)
+                adaptive_height: True
+
+                Widget:
+                    size_hint_y: None
+                    height: dp(10)
+
+                MDLabel:
+                    id: project_name_label
+                    text: ''
+                    font_style: 'H5'
+                    bold: True
+                    size_hint_y: None
+                    height: dp(40)
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(10)
+                
+                MDLabel:
+                    text: 'Parcelas do Projeto:'
+                    font_style: 'H6'
+                    bold: True
+                    size_hint_y: None
+                    height: dp(40)
+                
+                MDList:
+                    id: plots_list_container
+                    padding: dp(10)
+                    spacing: dp(10)
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(10)
+        
+        FloatLayout:
+            size_hint_y: None
+            height: dp(80)
+            padding: [dp(16), dp(16), dp(16), dp(16)]
+
+            MDFloatingActionButton:
+                icon: 'plus'
+                md_bg_color: app.theme_cls.primary_color
+                size_hint: None, None
+                size: dp(64), dp(64)
+                pos_hint: {'right': 0.95, 'center_y': 0.5}
+                on_release: app.go_to_new_plot()
+
+<DeletePlotScreen>:
+    name: 'delete_plot_screen'
+    on_pre_enter: app.load_delete_plots_list()
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Excluir Parcela'
+            elevation: 0
+            pos_hint: {'top': 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [['arrow-left', lambda x: app.go_back()]]
+        
+        MDScrollView:
+            MDList:
+                id: delete_plots_list_container
+                padding: dp(10)
+                spacing: dp(10)
+        
+        MDLabel:
+            text: 'Toque em uma parcela para excluí-la'
+            halign: 'center'
+            font_style: 'Caption'
+            size_hint_y: None
+            height: dp(40)
+            padding: [dp(10), dp(10)]
+
+<NewPlotScreen1>:
+    name: 'new_plot_screen1'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Nova Parcela - Localização'
+            elevation: 0
+            pos_hint: {'top': 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [['arrow-left', lambda x: app.go_back()]]
+
+        MDScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(20)
+                adaptive_height: True
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(20)
+
+                MDLabel:
+                    text: 'Insira as coordenadas e altitude da parcela:'
+                    font_style: 'Body1'
+                    size_hint_y: None
+                    height: dp(40)
+
+                MDTextField:
+                    id: latitude_input
+                    hint_text: 'Latitude'
+                    helper_text: 'Entre -90 e 90 graus decimais'
+                    helper_text_mode: 'on_focus'
+                    input_filter: lambda text, from_undo: text if all(c in '0123456789.-' for c in text) else ''
+
+                MDTextField:
+                    id: longitude_input
+                    hint_text: 'Longitude'
+                    helper_text: 'Entre -180 e 180 graus decimais'
+                    helper_text_mode: 'on_focus'
+                    input_filter: lambda text, from_undo: text if all(c in '0123456789.-' for c in text) else ''
+
+                MDTextField:
+                    id: altitude_input
+                    hint_text: 'Altitude (metros)'
+                    helper_text: 'Valor maior ou igual a zero'
+                    helper_text_mode: 'on_focus'
+                    input_filter: lambda text, from_undo: text if all(c in '0123456789.' for c in text) else ''
+
+                Widget:
+                    size_hint_y: None
+                    height: dp(20)
+
+                MDRaisedButton:
+                    text: 'Prosseguir'
+                    size_hint: (1, None)
+                    height: dp(50)
+                    md_bg_color: app.theme_cls.primary_color
+                    on_release: app.validate_and_save_plot_step1()
+
+<NewPlotScreen2>:
+    name: 'new_plot_screen2'
+    
+    MDBoxLayout:
+        orientation: 'vertical'
+        
+        MDTopAppBar:
+            title: 'Matriz Fisionômica'
+            elevation: 0
+            pos_hint: {"top": 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [["arrow-left", lambda x: app.go_back()]]
+            right_action_items: [["help-circle", lambda x: app.show_matriz_help()]]
+        
+        MDScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(16)
+                spacing: dp(16)
+                adaptive_height: True
+                
+                # Card da Legenda
+                MDCard:
+                    orientation: 'vertical'
+                    padding: dp(12)
+                    spacing: dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height
+                    elevation: 0
+                    radius: [8, 8, 8, 8]
+                    
+                    MDLabel:
+                        text: 'LEGENDA'
+                        halign: "left"
+                        theme_text_color: "Primary"
+                        font_style: "Subtitle1"
+                        bold: True
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    Widget:
+                        size_hint_y: None
+                        height: dp(8)
+                    
+                    MDLabel:
+                        text: 'Lenhosas:'
+                        halign: "left"
+                        theme_text_color: "Primary"
+                        font_style: "Body2"
+                        bold: True
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    MDLabel:
+                        text: 'B = folhas sempreverdes; D = folhas decíduas; E = acículas sempreverdes; N = acículas decíduas; O = áfilas; S = semidecíduas (B+D); M = mistas (E+D)'
+                        halign: "left"
+                        theme_text_color: "Secondary"
+                        font_style: "Caption"
+                        size_hint_y: None
+                        height: self.texture_size[1] + dp(8)
+                    
+                    MDLabel:
+                        text: 'Herbáceas:'
+                        halign: "left"
+                        theme_text_color: "Primary"
+                        font_style: "Body2"
+                        bold: True
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    MDLabel:
+                        text: 'G = graminoides; H = ervas comuns; L = musgos e líquens'
+                        halign: "left"
+                        theme_text_color: "Secondary"
+                        font_style: "Caption"
+                        size_hint_y: None
+                        height: self.texture_size[1] + dp(8)
+                    
+                    MDLabel:
+                        text: 'Especiais:'
+                        halign: "left"
+                        theme_text_color: "Primary"
+                        font_style: "Body2"
+                        bold: True
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    MDLabel:
+                        text: 'C = lianas; K = caule suculento; T = plantas tufadas; V = bambus; X = epífitas; F = folhas especiais'
+                        halign: "left"
+                        theme_text_color: "Secondary"
+                        font_style: "Caption"
+                        size_hint_y: None
+                        height: self.texture_size[1] + dp(8)
+                    
+                    MDLabel:
+                        text: 'Classes de Cobertura:'
+                        halign: "left"
+                        theme_text_color: "Primary"
+                        font_style: "Body2"
+                        bold: True
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    MDLabel:
+                        text: 'c = contínua (>75%); i = interrompida (51-75%); p = porosa (26-50%); r = rara (6-25%); b = baixa (1-5%); a = ausente (<1%)'
+                        halign: "left"
+                        theme_text_color: "Secondary"
+                        font_style: "Caption"
+                        size_hint_y: None
+                        height: self.texture_size[1] + dp(8)
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(8)
+                
+                # Matriz Fisionômica (Scroll Horizontal)
+                ScrollView:
+                    do_scroll_y: False
+                    do_scroll_x: True
+                    size_hint_y: None
+                    height: dp(440)
+                    
+                    GridLayout:
+                        id: matriz_grid
+                        cols: 18
+                        spacing: dp(2)
+                        size_hint_x: None
+                        width: self.minimum_width
+                        size_hint_y: None
+                        height: dp(440)
+                        
+                        # Linha de cabeçalho
+                        MDLabel:
+                            text: "#"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(30), dp(40)
+                        
+                        MDLabel:
+                            text: 'Altura'
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(70), dp(40)
+                        
+                        MDLabel:
+                            text: "B"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "D"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "E"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "N"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "O"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "S"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "M"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "G"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "H"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "L"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "C"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "K"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "T"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "V"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "X"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        MDLabel:
+                            text: "F"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(28), dp(40)
+                        
+                        # Linha Altura 8 (>35m)
+                        MDLabel:
+                            text: "8"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(30), dp(35)
+                        
+                        MDLabel:
+                            text: ">35m"
+                            halign: "center"
+                            valign: "middle"
+                            size_hint: None, None
+                            size: dp(70), dp(35)
+                        
+                        MDFlatButton:
+                            id: cell_B8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('B', '8')
+                        
+                        MDFlatButton:
+                            id: cell_D8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('D', '8')
+                        
+                        MDFlatButton:
+                            id: cell_E8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('E', '8')
+                        
+                        MDFlatButton:
+                            id: cell_N8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('N', '8')
+                        
+                        MDFlatButton:
+                            id: cell_O8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('O', '8')
+                        
+                        MDFlatButton:
+                            id: cell_S8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('S', '8')
+                        
+                        MDFlatButton:
+                            id: cell_M8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('M', '8')
+                        
+                        MDFlatButton:
+                            id: cell_G8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('G', '8')
+                        
+                        MDFlatButton:
+                            id: cell_H8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('H', '8')
+                        
+                        MDFlatButton:
+                            id: cell_L8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('L', '8')
+                        
+                        MDFlatButton:
+                            id: cell_C8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('C', '8')
+                        
+                        MDFlatButton:
+                            id: cell_K8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('K', '8')
+                        
+                        MDFlatButton:
+                            id: cell_T8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('T', '8')
+                        
+                        MDFlatButton:
+                            id: cell_V8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('V', '8')
+                        
+                        MDFlatButton:
+                            id: cell_X8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('X', '8')
+                        
+                        MDFlatButton:
+                            id: cell_F8
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_folha_cell('8')
+                        
+                        # Linha Altura 7 (20-35m)
+                        MDLabel:
+                            text: "7"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(30), dp(35)
+                        
+                        MDLabel:
+                            text: "20-35m"
+                            halign: "center"
+                            valign: "middle"
+                            size_hint: None, None
+                            size: dp(70), dp(35)
+                        
+                        MDFlatButton:
+                            id: cell_B7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('B', '7')
+                        
+                        MDFlatButton:
+                            id: cell_D7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('D', '7')
+                        
+                        MDFlatButton:
+                            id: cell_E7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('E', '7')
+                        
+                        MDFlatButton:
+                            id: cell_N7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('N', '7')
+                        
+                        MDFlatButton:
+                            id: cell_O7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('O', '7')
+                        
+                        MDFlatButton:
+                            id: cell_S7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('S', '7')
+                        
+                        MDFlatButton:
+                            id: cell_M7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('M', '7')
+                        
+                        MDFlatButton:
+                            id: cell_G7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('G', '7')
+                        
+                        MDFlatButton:
+                            id: cell_H7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('H', '7')
+                        
+                        MDFlatButton:
+                            id: cell_L7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('L', '7')
+                        
+                        MDFlatButton:
+                            id: cell_C7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('C', '7')
+                        
+                        MDFlatButton:
+                            id: cell_K7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('K', '7')
+                        
+                        MDFlatButton:
+                            id: cell_T7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('T', '7')
+                        
+                        MDFlatButton:
+                            id: cell_V7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('V', '7')
+                        
+                        MDFlatButton:
+                            id: cell_X7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('X', '7')
+                        
+                        MDFlatButton:
+                            id: cell_F7
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_folha_cell('7')
+                        
+                        # Linha Altura 6 (10-20m)
+                        MDLabel:
+                            text: "6"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(30), dp(35)
+                        
+                        MDLabel:
+                            text: "10-20m"
+                            halign: "center"
+                            valign: "middle"
+                            size_hint: None, None
+                            size: dp(70), dp(35)
+                        
+                        MDFlatButton:
+                            id: cell_B6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('B', '6')
+                        
+                        MDFlatButton:
+                            id: cell_D6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('D', '6')
+                        
+                        MDFlatButton:
+                            id: cell_E6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('E', '6')
+                        
+                        MDFlatButton:
+                            id: cell_N6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('N', '6')
+                        
+                        MDFlatButton:
+                            id: cell_O6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('O', '6')
+                        
+                        MDFlatButton:
+                            id: cell_S6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('S', '6')
+                        
+                        MDFlatButton:
+                            id: cell_M6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('M', '6')
+                        
+                        MDFlatButton:
+                            id: cell_G6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('G', '6')
+                        
+                        MDFlatButton:
+                            id: cell_H6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('H', '6')
+                        
+                        MDFlatButton:
+                            id: cell_L6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('L', '6')
+                        
+                        MDFlatButton:
+                            id: cell_C6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('C', '6')
+                        
+                        MDFlatButton:
+                            id: cell_K6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('K', '6')
+                        
+                        MDFlatButton:
+                            id: cell_T6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('T', '6')
+                        
+                        MDFlatButton:
+                            id: cell_V6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('V', '6')
+                        
+                        MDFlatButton:
+                            id: cell_X6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('X', '6')
+                        
+                        MDFlatButton:
+                            id: cell_F6
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_folha_cell('6')
+                        
+                        # Linha Altura 5 (5-10m)
+                        MDLabel:
+                            text: "5"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(30), dp(35)
+                        
+                        MDLabel:
+                            text: "5-10m"
+                            halign: "center"
+                            valign: "middle"
+                            size_hint: None, None
+                            size: dp(70), dp(35)
+                        
+                        MDFlatButton:
+                            id: cell_B5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('B', '5')
+                        
+                        MDFlatButton:
+                            id: cell_D5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('D', '5')
+                        
+                        MDFlatButton:
+                            id: cell_E5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('E', '5')
+                        
+                        MDFlatButton:
+                            id: cell_N5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('N', '5')
+                        
+                        MDFlatButton:
+                            id: cell_O5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('O', '5')
+                        
+                        MDFlatButton:
+                            id: cell_S5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('S', '5')
+                        
+                        MDFlatButton:
+                            id: cell_M5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('M', '5')
+                        
+                        MDFlatButton:
+                            id: cell_G5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('G', '5')
+                        
+                        MDFlatButton:
+                            id: cell_H5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('H', '5')
+                        
+                        MDFlatButton:
+                            id: cell_L5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('L', '5')
+                        
+                        MDFlatButton:
+                            id: cell_C5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('C', '5')
+                        
+                        MDFlatButton:
+                            id: cell_K5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('K', '5')
+                        
+                        MDFlatButton:
+                            id: cell_T5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('T', '5')
+                        
+                        MDFlatButton:
+                            id: cell_V5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('V', '5')
+                        
+                        MDFlatButton:
+                            id: cell_X5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('X', '5')
+                        
+                        MDFlatButton:
+                            id: cell_F5
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_folha_cell('5')
+                        
+                        # Linha Altura 4 (2-5m)
+                        MDLabel:
+                            text: "4"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(30), dp(35)
+                        
+                        MDLabel:
+                            text: "2-5m"
+                            halign: "center"
+                            valign: "middle"
+                            size_hint: None, None
+                            size: dp(70), dp(35)
+                        
+                        MDFlatButton:
+                            id: cell_B4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('B', '4')
+                        
+                        MDFlatButton:
+                            id: cell_D4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('D', '4')
+                        
+                        MDFlatButton:
+                            id: cell_E4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('E', '4')
+                        
+                        MDFlatButton:
+                            id: cell_N4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('N', '4')
+                        
+                        MDFlatButton:
+                            id: cell_O4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('O', '4')
+                        
+                        MDFlatButton:
+                            id: cell_S4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('S', '4')
+                        
+                        MDFlatButton:
+                            id: cell_M4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('M', '4')
+                        
+                        MDFlatButton:
+                            id: cell_G4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('G', '4')
+                        
+                        MDFlatButton:
+                            id: cell_H4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('H', '4')
+                        
+                        MDFlatButton:
+                            id: cell_L4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('L', '4')
+                        
+                        MDFlatButton:
+                            id: cell_C4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('C', '4')
+                        
+                        MDFlatButton:
+                            id: cell_K4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('K', '4')
+                        
+                        MDFlatButton:
+                            id: cell_T4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('T', '4')
+                        
+                        MDFlatButton:
+                            id: cell_V4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('V', '4')
+                        
+                        MDFlatButton:
+                            id: cell_X4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('X', '4')
+                        
+                        MDFlatButton:
+                            id: cell_F4
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_folha_cell('4')
+                        
+                        # Linha Altura 3 (0.5-2m)
+                        MDLabel:
+                            text: "3"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(30), dp(35)
+                        
+                        MDLabel:
+                            text: "0.5-2m"
+                            halign: "center"
+                            valign: "middle"
+                            size_hint: None, None
+                            size: dp(70), dp(35)
+                        
+                        MDFlatButton:
+                            id: cell_B3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('B', '3')
+                        
+                        MDFlatButton:
+                            id: cell_D3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('D', '3')
+                        
+                        MDFlatButton:
+                            id: cell_E3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('E', '3')
+                        
+                        MDFlatButton:
+                            id: cell_N3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('N', '3')
+                        
+                        MDFlatButton:
+                            id: cell_O3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('O', '3')
+                        
+                        MDFlatButton:
+                            id: cell_S3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('S', '3')
+                        
+                        MDFlatButton:
+                            id: cell_M3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('M', '3')
+                        
+                        MDFlatButton:
+                            id: cell_G3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('G', '3')
+                        
+                        MDFlatButton:
+                            id: cell_H3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('H', '3')
+                        
+                        MDFlatButton:
+                            id: cell_L3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('L', '3')
+                        
+                        MDFlatButton:
+                            id: cell_C3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('C', '3')
+                        
+                        MDFlatButton:
+                            id: cell_K3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('K', '3')
+                        
+                        MDFlatButton:
+                            id: cell_T3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('T', '3')
+                        
+                        MDFlatButton:
+                            id: cell_V3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('V', '3')
+                        
+                        MDFlatButton:
+                            id: cell_X3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('X', '3')
+                        
+                        MDFlatButton:
+                            id: cell_F3
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_folha_cell('3')
+                        
+                        # Linha Altura 2 (0.1-0.5m)
+                        MDLabel:
+                            text: "2"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(30), dp(35)
+                        
+                        MDLabel:
+                            text: "0.1-0.5m"
+                            halign: "center"
+                            valign: "middle"
+                            size_hint: None, None
+                            size: dp(70), dp(35)
+                        
+                        MDFlatButton:
+                            id: cell_B2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('B', '2')
+                        
+                        MDFlatButton:
+                            id: cell_D2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('D', '2')
+                        
+                        MDFlatButton:
+                            id: cell_E2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('E', '2')
+                        
+                        MDFlatButton:
+                            id: cell_N2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('N', '2')
+                        
+                        MDFlatButton:
+                            id: cell_O2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('O', '2')
+                        
+                        MDFlatButton:
+                            id: cell_S2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('S', '2')
+                        
+                        MDFlatButton:
+                            id: cell_M2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('M', '2')
+                        
+                        MDFlatButton:
+                            id: cell_G2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('G', '2')
+                        
+                        MDFlatButton:
+                            id: cell_H2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('H', '2')
+                        
+                        MDFlatButton:
+                            id: cell_L2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('L', '2')
+                        
+                        MDFlatButton:
+                            id: cell_C2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('C', '2')
+                        
+                        MDFlatButton:
+                            id: cell_K2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('K', '2')
+                        
+                        MDFlatButton:
+                            id: cell_T2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('T', '2')
+                        
+                        MDFlatButton:
+                            id: cell_V2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('V', '2')
+                        
+                        MDFlatButton:
+                            id: cell_X2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('X', '2')
+                        
+                        MDFlatButton:
+                            id: cell_F2
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_folha_cell('2')
+                        
+                        # Linha Altura 1 (<0.1m)
+                        MDLabel:
+                            text: "1"
+                            halign: "center"
+                            valign: "middle"
+                            bold: True
+                            size_hint: None, None
+                            size: dp(30), dp(35)
+                        
+                        MDLabel:
+                            text: "<0.1m"
+                            halign: "center"
+                            valign: "middle"
+                            size_hint: None, None
+                            size: dp(70), dp(35)
+                        
+                        MDFlatButton:
+                            id: cell_B1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('B', '1')
+                        
+                        MDFlatButton:
+                            id: cell_D1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('D', '1')
+                        
+                        MDFlatButton:
+                            id: cell_E1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('E', '1')
+                        
+                        MDFlatButton:
+                            id: cell_N1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('N', '1')
+                        
+                        MDFlatButton:
+                            id: cell_O1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('O', '1')
+                        
+                        MDFlatButton:
+                            id: cell_S1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('S', '1')
+                        
+                        MDFlatButton:
+                            id: cell_M1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('M', '1')
+                        
+                        MDFlatButton:
+                            id: cell_G1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('G', '1')
+                        
+                        MDFlatButton:
+                            id: cell_H1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('H', '1')
+                        
+                        MDFlatButton:
+                            id: cell_L1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('L', '1')
+                        
+                        MDFlatButton:
+                            id: cell_C1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('C', '1')
+                        
+                        MDFlatButton:
+                            id: cell_K1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('K', '1')
+                        
+                        MDFlatButton:
+                            id: cell_T1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('T', '1')
+                        
+                        MDFlatButton:
+                            id: cell_V1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('V', '1')
+                        
+                        MDFlatButton:
+                            id: cell_X1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_matriz_cell('X', '1')
+                        
+                        MDFlatButton:
+                            id: cell_F1
+                            text: ""
+                            md_bg_color: app.theme_cls.primary_color
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            size_hint: None, None
+                            size: dp(28), dp(28)
+                            padding: 0, 0
+                            on_release: app.select_folha_cell('1')
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(24)
+                
+                MDRaisedButton:
+                    text: 'Finalizar e Salvar Parcela'
+                    size_hint_x: 1
+                    size_hint_y: None
+                    height: dp(56)
+                    md_bg_color: app.theme_cls.primary_color
+                    font_size: "16sp"
+                    on_release: app.finalize_and_save_plot()
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(16)
+
+<SettingsScreen>:
+    name: 'settings_screen'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Configurações'
+            elevation: 0
+            pos_hint: {'top': 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [['arrow-left', lambda x: app.go_back()]]
+
+        MDScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(16)
+                adaptive_height: True
+
+                Widget:
+                    size_hint_y: None
+                    height: dp(10)
+
+                MDLabel:
+                    text: 'Configurações de Tema'
+                    font_style: 'H6'
+                    bold: True
+                    size_hint_y: None
+                    height: dp(40)
+                
+                MDCard:
+                    padding: dp(20)
+                    size_hint_y: None
+                    height: dp(70)
+                    elevation: 0
+                    ripple_behavior: True
+                    md_bg_color: app.theme_cls.primary_color
+                    radius: [10, 10, 10, 10]
+                    on_release: app.toggle_theme_and_save()
+                    
+                    MDLabel:
+                        text: 'Alternar Tema Claro/Escuro'
+                        halign: 'center'
+                        valign: 'middle'
+                        font_style: 'Subtitle1'
+                        bold: True
+                        theme_text_color: 'Custom'
+                        text_color: 1, 1, 1, 1
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(20)
+                
+                MDLabel:
+                    text: 'Configurações de Cores'
+                    font_style: 'H6'
+                    bold: True
+                    size_hint_y: None
+                    height: dp(40)
+                
+                # Opção 1: Azul
+                MDCard:
+                    size_hint_y: None
+                    height: dp(70)
+                    elevation: 0
+                    ripple_behavior: True
+                    md_bg_color: 0.13, 0.59, 0.95, 1
+                    radius: [10, 10, 10, 10]
+                    on_release: app.change_color_and_save('Blue')
+                    
+                    MDLabel:
+                        text: 'Azul'
+                        halign: 'center'
+                        valign: 'middle'
+                        font_style: 'Subtitle1'
+                        bold: True
+                        theme_text_color: 'Custom'
+                        text_color: 1, 1, 1, 1
+                
+                # Opção 2: Verde
+                MDCard:
+                    size_hint_y: None
+                    height: dp(70)
+                    elevation: 0
+                    ripple_behavior: True
+                    md_bg_color: 0.30, 0.69, 0.31, 1
+                    radius: [10, 10, 10, 10]
+                    on_release: app.change_color_and_save('Green')
+                    
+                    MDLabel:
+                        text: 'Verde'
+                        halign: 'center'
+                        valign: 'middle'
+                        font_style: 'Subtitle1'
+                        bold: True
+                        theme_text_color: 'Custom'
+                        text_color: 1, 1, 1, 1
+                
+                # Opção 3: Roxo
+                MDCard:
+                    size_hint_y: None
+                    height: dp(70)
+                    elevation: 0
+                    ripple_behavior: True
+                    md_bg_color: 0.61, 0.15, 0.69, 1
+                    radius: [10, 10, 10, 10]
+                    on_release: app.change_color_and_save('Purple')
+                    
+                    MDLabel:
+                        text: 'Roxo'
+                        halign: 'center'
+                        valign: 'middle'
+                        font_style: 'Subtitle1'
+                        bold: True
+                        theme_text_color: 'Custom'
+                        text_color: 1, 1, 1, 1
+                
+                # Opção 4: Vermelho
+                MDCard:
+                    size_hint_y: None
+                    height: dp(70)
+                    elevation: 0
+                    ripple_behavior: True
+                    md_bg_color: 0.96, 0.26, 0.21, 1
+                    radius: [10, 10, 10, 10]
+                    on_release: app.change_color_and_save('Red')
+                    
+                    MDLabel:
+                        text: 'Vermelho'
+                        halign: 'center'
+                        valign: 'middle'
+                        font_style: 'Subtitle1'
+                        bold: True
+                        theme_text_color: 'Custom'
+                        text_color: 1, 1, 1, 1
+                
+                # Opção 5: Laranja
+                MDCard:
+                    size_hint_y: None
+                    height: dp(70)
+                    elevation: 0
+                    ripple_behavior: True
+                    md_bg_color: 1, 0.60, 0, 1
+                    radius: [10, 10, 10, 10]
+                    on_release: app.change_color_and_save('Orange')
+                    
+                    MDLabel:
+                        text: 'Laranja'
+                        halign: 'center'
+                        valign: 'middle'
+                        font_style: 'Subtitle1'
+                        bold: True
+                        theme_text_color: 'Custom'
+                        text_color: 1, 1, 1, 1
+                
+                # Opção 6: Rosa
+                MDCard:
+                    size_hint_y: None
+                    height: dp(70)
+                    elevation: 0
+                    ripple_behavior: True
+                    md_bg_color: 0.91, 0.12, 0.39, 1
+                    radius: [10, 10, 10, 10]
+                    on_release: app.change_color_and_save('Pink')
+                    
+                    MDLabel:
+                        text: 'Rosa'
+                        halign: 'center'
+                        valign: 'middle'
+                        font_style: 'Subtitle1'
+                        bold: True
+                        theme_text_color: 'Custom'
+                        text_color: 1, 1, 1, 1
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(20)
+                
+<AboutAppScreen>:
+    name: 'about_app_screen'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+    
+        MDTopAppBar:
+            title: 'Sobre o Aplicativo'
+            elevation: 0
+            pos_hint: {'top': 1}
+            md_bg_color: app.theme_cls.primary_color
+            left_action_items: [['arrow-left', lambda x: app.go_back()]]
+
+        MDScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(16)
+                spacing: dp(8)
+                adaptive_height: True
+
+                # Cabeçalho compacto
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: dp(85)
+                    spacing: dp(4)
+                    padding: dp(12)
+
+                    MDLabel:
+                        text: 'KuchlerApp'
+                        halign: 'center'
+                        font_style: 'H6'
+                        bold: True
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                    MDLabel:
+                        text: 'v1.0.0'
+                        halign: 'center'
+                        font_style: 'Caption'
+                        color: app.theme_cls.disabled_hint_text_color
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                    MDLabel:
+                        text: 'Levantamento e classificação fitofisionômica de vegetação em campo'
+                        halign: 'center'
+                        font_style: 'Body2'
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                # Card de Objetivo
+                MDCard:
+                    orientation: 'vertical'
+                    padding: dp(12)
+                    spacing: dp(6)
+                    size_hint_y: None
+                    adaptive_height: True
+                    elevation: 0
+                    line_color: (0.7, 0.7, 0.7, 1)
+                    style: "outlined"
+
+                    MDLabel:
+                        text: 'Objetivo'
+                        font_style: 'Subtitle2'
+                        bold: True
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                    MDLabel:
+                        text: 'Ferramenta digital para inventários fitofisionômicos substituindo cadernetas tradicionais por sistema integrado.'
+                        halign: 'justify'
+                        font_style: 'Caption'
+                        size_hint_y: None
+                        text_size: self.width, None
+                        height: self.texture_size[1]
+
+                # Card de Funcionalidades
+                MDCard:
+                    orientation: 'vertical'
+                    padding: dp(12)
+                    spacing: dp(6)
+                    size_hint_y: None
+                    adaptive_height: True
+                    elevation: 0
+                    line_color: (0.7, 0.7, 0.7, 1)
+                    style: "outlined"
+
+                    MDLabel:
+                        text: 'Funcionalidades'
+                        font_style: 'Subtitle2'
+                        bold: True
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                    MDLabel:
+                        text: '• Gerenciamento de projetos\n• Matriz fisionômica 16×8\n• Fórmulas Küchler automáticas\n• Exportação em CSV'
+                        halign: 'left'
+                        font_style: 'Caption'
+                        size_hint_y: None
+                        text_size: self.width, None
+                        height: self.texture_size[1]
+
+                # Card de Küchler
+                MDCard:
+                    orientation: 'vertical'
+                    padding: dp(12)
+                    spacing: dp(6)
+                    size_hint_y: None
+                    adaptive_height: True
+                    elevation: 0
+                    line_color: (0.7, 0.7, 0.7, 1)
+                    style: "outlined"
+
+                    MDLabel:
+                        text: 'August Wilhelm Küchler'
+                        font_style: 'Subtitle2'
+                        bold: True
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                    MDLabel:
+                        text: 'Geógrafo alemão-americano (1907 - 1999). Desenvolveu sistema de notação para descrever a estrutura tridimensional da vegetação.'
+                        halign: 'justify'
+                        font_style: 'Caption'
+                        size_hint_y: None
+                        text_size: self.width, None
+                        height: self.texture_size[1]
+
+                # Card Técnico
+                MDCard:
+                    orientation: 'vertical'
+                    padding: dp(12)
+                    spacing: dp(6)
+                    size_hint_y: None
+                    adaptive_height: True
+                    elevation: 0
+                    line_color: (0.7, 0.7, 0.7, 1)
+                    style: "outlined"
+
+                    MDLabel:
+                        text: 'Python 3.10+ • KivyMD • JSON • CSV'
+                        halign: 'center'
+                        font_style: 'Caption'
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                    MDLabel:
+                        text: 'Baseado em: CAVALCANTI, L.C.S. Caderneta de campo para inventário fisionômico. PAISAGEO/UFPE: Recife. 2024. 13p.'
+                        halign: 'center'
+                        font_style: 'Caption'
+                        color: app.theme_cls.disabled_hint_text_color
+                        size_hint_y: None
+                        text_size: self.width, None
+                        height: self.texture_size[1]
+                    
+                    MDRaisedButton:
+                        text: 'Acessar Referência'
+                        size_hint_x: 1
+                        size_hint_y: None
+                        height: dp(40)
+                        md_bg_color: app.theme_cls.primary_color
+                        on_release: app.open_url('https://www.even3.com.br/anais/biogeografia-icbb-iiicib-xiiiceb/870211-caderneta-de-campo-para-inventario-fisionomico/')
+
+                # Rodapé
+                MDLabel:
+                    text: 'GPL-3.0 • Desenvolvido para pesquisa em campo'
+                    halign: 'center'
+                    font_style: 'Caption'
+                    color: app.theme_cls.disabled_hint_text_color
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    padding: dp(8)
