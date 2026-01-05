@@ -102,6 +102,33 @@ def generate_kuchler_formula(physiognomic_matrix):
     return ''.join(formula_parts)
 
 
+def _join_with_and(items):
+    """
+    Junta uma lista de itens com vírgulas e 'e' antes do último item.
+    
+    Args:
+        items (list): Lista de strings
+    
+    Returns:
+        str: String formatada
+    
+    Exemplo:
+        >>> _join_with_and(['a', 'b', 'c'])
+        'a, b e c'
+        >>> _join_with_and(['a', 'b'])
+        'a e b'
+        >>> _join_with_and(['a'])
+        'a'
+    """
+    if not items:
+        return ''
+    if len(items) == 1:
+        return items[0]
+    if len(items) == 2:
+        return f"{items[0]} e {items[1]}"
+    return ', '.join(items[:-1]) + f" e {items[-1]}"
+
+
 def generate_formula_description(physiognomic_matrix):
     """
     Gera a descrição textual por extenso da fórmula fisionômica.
@@ -155,10 +182,9 @@ def generate_formula_description(physiognomic_matrix):
         'a': 'ausente (<1%)'
     }
     
-    # Organizar dados
-    forms_order = ['B', 'D', 'E', 'N', 'O', 'S', 'M', 'G', 'H', 'L', 'C', 'K', 'T', 'V', 'X']
-    data_by_form = {}
-    all_heights = set()  # Para contar estratos únicos
+    # Organizar dados por altura (estrato)
+    heights_order = ['8', '7', '6', '5', '4', '3', '2', '1']  # Do mais alto para o mais baixo
+    data_by_height = {}
     
     for key, coverage in physiognomic_matrix.items():
         if len(key) >= 2:
@@ -168,29 +194,27 @@ def generate_formula_description(physiognomic_matrix):
             if form == 'F':
                 continue
             
-            all_heights.add(height)  # Adicionar altura ao conjunto
+            if height not in data_by_height:
+                data_by_height[height] = []
             
-            if form not in data_by_form:
-                data_by_form[form] = []
-            
-            data_by_form[form].append({
-                'height': height,
+            data_by_height[height].append({
+                'form': form,
                 'coverage': coverage,
-                'height_desc': heights_desc.get(height, height),
+                'form_desc': forms_desc.get(form, form),
                 'coverage_desc': coverage_desc.get(coverage, coverage)
             })
     
     # Contar número de estratos
-    num_estratos = len(all_heights)
+    num_estratos = len(data_by_height)
     estrato_text = 'estrato' if num_estratos == 1 else 'estratos'
     
-    # Construir descrição
-    descriptions = []
+    # Construir descrição por estrato (do mais alto para o mais baixo)
+    stratum_descriptions = []
     
-    for form in forms_order:
-        if form in data_by_form:
-            form_name = forms_desc.get(form, form)
-            records = data_by_form[form]
+    for height in heights_order:
+        if height in data_by_height:
+            height_desc = heights_desc.get(height, height)
+            records = data_by_height[height]
             
             # Agrupar por cobertura
             by_coverage = {}
@@ -198,23 +222,31 @@ def generate_formula_description(physiognomic_matrix):
                 cov = rec['coverage']
                 if cov not in by_coverage:
                     by_coverage[cov] = []
-                by_coverage[cov].append(rec['height_desc'])
+                by_coverage[cov].append(rec['form_desc'])
             
             # Criar descrições para cada cobertura
             form_parts = []
-            for cov, hgts in by_coverage.items():
-                heights_text = ', '.join(hgts)
+            for cov, forms in by_coverage.items():
+                # Usar função auxiliar para juntar formas com "e"
+                forms_text = _join_with_and(forms)
                 cov_text = coverage_desc.get(cov, cov)
                 # Remover a descrição entre parênteses (ex: "(>75%)")
                 cov_text_clean = cov_text.split(' (')[0]
-                form_parts.append(f"{heights_text} com cobertura {cov_text_clean}")
+                form_parts.append(f"{forms_text} com cobertura {cov_text_clean}")
             
-            full_desc = f"{form_name.capitalize()} {' e '.join(form_parts)}"
-            descriptions.append(full_desc)
+            # Articular as diferentes coberturas
+            if len(form_parts) == 1:
+                coverage_desc_text = form_parts[0]
+            else:
+                # Quando há múltiplas coberturas diferentes, usar vírgula e "e"
+                coverage_desc_text = _join_with_and(form_parts)
+            
+            full_desc = f"Na faixa de altura {height_desc}, predominam {coverage_desc_text}"
+            stratum_descriptions.append(full_desc)
     
-    if descriptions:
+    if stratum_descriptions:
         # Adicionar informação sobre estratos no início
-        final_description = f"Vegetação em {num_estratos} {estrato_text}. " + '; '.join(descriptions) + '.'
+        final_description = f"Vegetação em {num_estratos} {estrato_text}. " + '. '.join(stratum_descriptions) + '.'
         return final_description
     else:
         return 'Sem dados fisionômicos.'
