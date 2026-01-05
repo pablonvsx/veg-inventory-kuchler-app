@@ -14,6 +14,8 @@ Fornecer uma ferramenta digital para biólogos, ecólogos e pesquisadores realiz
 - Exporta dados para análises posteriores (formato CSV)
 - Mantém histórico organizado por projetos
 
+![GIF KuchlerApp](https://github.com/user-attachments/assets/b9f75360-b64d-4af9-b500-617887f4171b)
+
 ## Sobre August Wilhelm Küchler
 
 August Wilhelm Küchler (1907-1999) foi um geógrafo e biogeógrafo alemão-americano, pioneiro no desenvolvimento de métodos sistemáticos para mapeamento e classificação fisionômica da vegetação. Professor emérito da Universidade do Kansas, Küchler dedicou sua carreira ao estudo da geografia da vegetação e ao desenvolvimento de sistemas de classificação que pudessem ser aplicados universalmente.
