@@ -13,16 +13,16 @@ package.domain = org.kuchlerapp
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py, png, jpg, kv, json
+source.include_exts = py,png,jpg,kv,atlas,json
 
 # (list) List of inclusions using pattern matching
-source.include_patterns = modules/*, exports/*
+source.include_patterns = data.json,modules/*
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
 
 # (list) List of directory to exclude (let empty to not exclude anything)
-source.exclude_dirs = tests, bin, .git, .buildozer, __pycache__, .vscode, exports
+source.exclude_dirs = tests,bin,.git,.buildozer,__pycache__,.vscode,.venv,exports
 
 # (list) List of exclusions using pattern matching
 #source.exclude_patterns = license,images/*/*.jpg
@@ -36,7 +36,7 @@ version = 1.0.0
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy==2.2.0, kivymd==1.1.1, pillow, openssl
+requirements = python3,kivy==2.2.0,kivymd==1.1.1,pillow,pyjnius
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

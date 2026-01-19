@@ -4,17 +4,10 @@
 Inventário Fitofisionômico - Método Küchler
 Aplicativo mobile para levantamento e classificação fitofisionômica de vegetação.
 
-Requer: Python 3.10+
-Autor: Seu Nome
+Requer: Python 3.9+
+Autor: Pablo Guilherme de Melo Neves
 Licença: GPL-3.0
 """
-
-# Verificação da versão do Python
-import sys
-if sys.version_info < (3, 10):
-    print("Erro: Este aplicativo requer Python 3.10 ou superior.")
-    print(f"Versão atual: Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
-    sys.exit(1)
 
 # Importações do Kivy e KivyMD
 from kivymd.app import MDApp
@@ -55,9 +48,8 @@ COVERAGE_DESCRIPTIONS = {
     'a': 'ausente (<1%)'
 }
 
-# Carrega dados e configura janela
+# Carrega dados
 projects_data = data.load_data(JSON_FILE)
-Window.size = WINDOW_SIZE
 
 class KuchlerInventoryApp(MDApp):
     """Aplicativo de inventário fitofisionômico usando metodologia Küchler."""
@@ -65,6 +57,12 @@ class KuchlerInventoryApp(MDApp):
     def build(self):
         """Inicializa o aplicativo e carrega configurações."""
         self.title = 'KuchlerApp'
+        
+        # Configura tamanho da janela apenas em desktop
+        from kivy.utils import platform
+        if platform not in ('android', 'ios'):
+            Window.size = WINDOW_SIZE
+        
         # Cores disponíveis para o tema
         self.colors = {
             'Blue': 'Blue',
@@ -338,7 +336,25 @@ class KuchlerInventoryApp(MDApp):
     
     def open_url(self, url):
         """Abre uma URL no navegador padrão."""
-        webbrowser.open(url)
+        from kivy.utils import platform
+        
+        if platform == 'android':
+            # Em Android, usar intent para abrir URL
+            try:
+                from jnius import autoclass
+                PythonActivity = autoclass('org.kivy.android.PythonActivity')
+                Intent = autoclass('android.content.Intent')
+                Uri = autoclass('android.net.Uri')
+                
+                intent = Intent()
+                intent.setAction(Intent.ACTION_VIEW)
+                intent.setData(Uri.parse(url))
+                PythonActivity.mActivity.startActivity(intent)
+            except Exception as e:
+                print(f"Erro ao abrir URL no Android: {e}")
+        else:
+            # Em desktop, usar webbrowser
+            webbrowser.open(url)
     
     # ==================== VISUALIZAÇÃO DE PROJETOS ====================
     
